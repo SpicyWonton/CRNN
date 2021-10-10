@@ -5,7 +5,7 @@ MJSYNTH_VAL_ANNOTATION_FILE = 'annotation_val.txt'
 MJSYNTH_LMDB_DIR = '/mnt/hdd3/std2021/huyi/datasets/lmdb/mjsynth/'
 
 # train
-BATCH_SIZE = 64
+BATCH_SIZE = 256
 NUM_WORKERS = 2
 IMG_HEIGHT = 32
 IMG_WIDTH = 100
@@ -15,5 +15,7 @@ CHECKPOINT_DIR = '/mnt/hdd3/std2021/huyi/checkpoints/CRNN/'
 CHECKPOINT_FILE = ''
 START_EPOCH = 0
 EPOCH_COUNT = 25
+DISPLAY_INTERVAL = 500
 BEST_ACCURACY = 0
 SEED = 996
+LOG_FILE = '/home/std2021/huyi/codes/python/MyProjects/CRNN/logs/log.txt'

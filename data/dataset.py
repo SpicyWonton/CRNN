@@ -1,7 +1,8 @@
 import io
 import os.path as osp
 import sys
-from PIL import Image
+from PIL import Image, ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 import lmdb
 import numpy as np

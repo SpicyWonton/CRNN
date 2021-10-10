@@ -1,0 +1,4 @@
+Train: [1/25][1/31705], train loss: 10.232
+Train: [1/25][500/31705], train loss: 3.1252
+Train: [1/25][1000/31705], train loss: 2.4311
+Train: [1/25][1500/31705], train loss: 1.7861

@@ -47,10 +47,10 @@ class CRNN(nn.Module):
         cnn.add_module(f'pooling{2}', nn.MaxPool2d(2, 2))
         add_conv(2, True)
         add_conv(3)
-        cnn.add_module(f'pooling{3}', nn.MaxPool2d((2, 1), (2, 1), (0, 1)))
+        cnn.add_module(f'pooling{3}', nn.MaxPool2d((2, 2), (2, 1), (0, 1)))
         add_conv(4, True)
         add_conv(5)
-        cnn.add_module(f'pooling{4}', nn.MaxPool2d((2, 1), (2, 1), (0, 1)))
+        cnn.add_module(f'pooling{4}', nn.MaxPool2d((2, 2), (2, 1), (0, 1)))
         add_conv(6, True)
 
         return cnn
@@ -64,9 +64,9 @@ class CRNN(nn.Module):
     def _init_weights(self):
         for m in self.cnn.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.normal(m.weight.data, mean=0, std=0.02)
+                nn.init.normal_(m.weight.data, mean=0, std=0.02)
             if isinstance(m, nn.BatchNorm2d):
-                nn.init.normal(m.weight.data, mean=1, std=0.02)
+                nn.init.normal_(m.weight.data, mean=1, std=0.02)
                 m.bias.data.fill_(0)
 
     def forward(self, input):

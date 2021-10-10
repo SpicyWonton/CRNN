@@ -1,4 +1,5 @@
 import collections.abc
+import os
 import os.path as osp
 import random
 
@@ -84,9 +85,21 @@ def save_checkpoint(model, optimizer, best_accuracy, epoch):
         'epoch': epoch
     }
     file_name = f'crnn_{epoch}_{best_accuracy:.5}'
+    if not osp.exists(config.CHECKPOINT_DIR):
+        os.makedirs(config.CHECKPOINT_DIR)
     torch.save(state, osp.join(config.CHECKPOINT_DIR, file_name))
     print(f'Checkpoint {file_name} was saved successfully.')
 
+
+def delete_log_file(file):
+    if osp.exists(file):
+        os.remove(file)
+
+
+def save_log_file(file, log):
+    with open(file, 'a') as f:
+        f.write(log + '\n')
+        f.close()
 
 if __name__ == '__main__':
     char_dict = CharDict(config.ALPHABET)

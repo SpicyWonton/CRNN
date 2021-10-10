@@ -3,9 +3,11 @@ import time
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.backends import cudnn
 from torch.utils.data import DataLoader
 
 import config
+import utils
 from data import LMDBDataset, AlignCollate
 from model import CRNN
 from utils import CharDict, save_checkpoint, set_random_seed
@@ -13,6 +15,8 @@ from utils import CharDict, save_checkpoint, set_random_seed
 def main():
     # set random seed
     set_random_seed()
+
+    cudnn.benchmark = True
 
     # device
     device = torch.device("cuda:1" if torch.cuda.is_available() else "cpu")
@@ -35,8 +39,8 @@ def main():
     model = CRNN(config.HIDDEN_DIM, class_count).to(device)
     optimizer = optim.Adadelta(model.parameters(), rho=0.9)
 
-    if config.CHECKPOINT != '':
-        checkpoint = torch.load(config.CHECKPOINT)
+    if config.CHECKPOINT_FILE != '':
+        checkpoint = torch.load(config.CHECKPOINT_FILE)
         model.load_state_dict(checkpoint['model'])
         optimizer.load_state_dict(checkpoint['optimizer'])
         config.START_EPOCH = checkpoint['start_epoch']
@@ -47,6 +51,8 @@ def main():
 
     # criterion
     criterion = nn.CTCLoss(blank=class_count-1).to(device)
+
+    utils.delete_log_file(config.LOG_FILE)
 
     for epoch in range(config.START_EPOCH, config.EPOCH_COUNT):
         train(model, train_dataloader, criterion, optimizer, char_dict, epoch, device)
@@ -86,13 +92,20 @@ def train(model, loader, criterion, optimizer, char_dict, epoch, device):
         avg_loss += loss.item()
 
         model.zero_grad()
-        loss.back_ward()
+        loss.backward()
         optimizer.step()
+
+        if i == 0 or (i + 1) % config.DISPLAY_INTERVAL == 0:
+            log = f'Train: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], train loss: {avg_loss/(i+1):.5}'
+            print(log)
+            utils.save_log_file(config.LOG_FILE, log)
     
     avg_loss /= (i + 1)
     end_time = time.time()
-    print(f'Train: [{epoch+1}/{config.EPOCH_COUNT}], train loss: {avg_loss}, batch time: {end_time-start_time}, '
-        f'dataloader time: {loader_time}.')
+    log = f'Train: [{epoch+1}/{config.EPOCH_COUNT}], train loss: {avg_loss}, batch time: {end_time-start_time}, ' \
+        f'dataloader time: {loader_time}'
+    print(log)
+    utils.save_log_file(config.LOG_FILE, log)
 
 
 def validate(model, loader, criterion, char_dict, epoch, device):
@@ -131,16 +144,24 @@ def validate(model, loader, criterion, char_dict, epoch, device):
                 if pred_word == label_word.lower():
                     correct_count += 1
             
-            # in order to display
-            raw_decoded_words = char_dict.decode(pred_chars, input_lengths, raw=True)[:5] # list of str
-            for raw_pred_word, pred_word, label_word in zip(raw_decoded_words, decoded_words, labels):
-                print(f'Raw pred word: {raw_pred_word} ==> pred word: {pred_word}, label word: {label_word}.')
+            if i == 0 or (i + 1) % config.DISPLAY_INTERVAL == 0:
+                log = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], val loss: {avg_loss/(i+1):.5}'
+                print(log)
+                utils.save_log_file(config.LOG_FILE, log)
+                # in order to display
+                raw_decoded_words = char_dict.decode(pred_chars, input_lengths, raw=True)[:5] # list of str
+                for raw_pred_word, pred_word, label_word in zip(raw_decoded_words, decoded_words, labels):
+                    log = f'Raw pred word: {raw_pred_word} ==> pred word: {pred_word}, label word: {label_word}'
+                    print(log)
+                    utils.save_log_file(config.LOG_FILE, log)
         
         avg_loss /= (i + 1)
         accuracy = correct_count / (config.BATCH_SIZE * (i + 1))
         end_time = time.time()
-        print(f'Validation: [{epoch+1}/{config.EPOCH_COUNT}], accuracy: {accuracy:.5}, val loss: {avg_loss},'
-            f'batch_time: {end_time - start_time}, dataloader time: {loader_time}')
+        log = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}], accuracy: {accuracy:.5}, val loss: {avg_loss}, ' \
+            f'batch_time: {end_time - start_time}, dataloader time: {loader_time}'
+        print(log)
+        utils.save_log_file(config.LOG_FILE, log)
         return accuracy
 
 

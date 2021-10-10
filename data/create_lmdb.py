@@ -48,7 +48,7 @@ def create_lmdb(lmdb_dir, image_path_list, label_list, flag='train', lexicon_lis
         lmdb_dir = osp.join(lmdb_dir, 'train/')
     elif flag == 'val':
         lmdb_dir = osp.join(lmdb_dir, 'val/')
-    if not os.path.exists(lmdb_dir):
+    if not osp.exists(lmdb_dir):
         os.makedirs(lmdb_dir)
     env = lmdb.open(lmdb_dir, map_size=1099511627776)
 
