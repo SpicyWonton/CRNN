@@ -1,5 +1,5 @@
-from .dataset import LMDBDataset
+from .dataset import AlignCollate, LMDBDataset
 
 __all__ = [
-    'LMDBDataset'
+    'AlignCollate', 'LMDBDataset'
 ]
