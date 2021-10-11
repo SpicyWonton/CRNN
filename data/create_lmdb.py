@@ -7,8 +7,8 @@ import lmdb
 import numpy as np
 
 sys.path.append('..')
-from config import MJSYNTH_DIR, MJSYNTH_TRAIN_ANNOTATION_FILE, \
-    MJSYNTH_VAL_ANNOTATION_FILE, MJSYNTH_LMDB_DIR
+from config import MJSYNTH_DIR, MJSYNTH_TRAIN_ANNOTATION_FILE, MJSYNTH_VAL_ANNOTATION_FILE, \
+    MJSYNTH_LMDB_DIR, SVT_DIR, SVT_TEST_XML_FILE, SVT_LMBD_DIR
 
 
 def _check_image_is_valid(image_bytes):
@@ -41,13 +41,15 @@ def _write_cache(env, cache):
 
 def create_lmdb(lmdb_dir, image_path_list, label_list, flag='train', lexicon_list=None):
     assert len(image_path_list) == len(label_list)
-    assert flag == 'train' or flag == 'val', \
-        'flag must be "train" or "val"'
+    assert flag in ['train', 'val', 'test'], \
+        'flag must be "train" or "val" or "test"'
     
     if flag == 'train':
         lmdb_dir = osp.join(lmdb_dir, 'train/')
     elif flag == 'val':
         lmdb_dir = osp.join(lmdb_dir, 'val/')
+    elif flag == 'test':
+        lmdb_dir = osp.join(lmdb_dir, 'test/')
     if not osp.exists(lmdb_dir):
         os.makedirs(lmdb_dir)
     env = lmdb.open(lmdb_dir, map_size=1099511627776)
@@ -95,12 +97,15 @@ def create_lmdb(lmdb_dir, image_path_list, label_list, flag='train', lexicon_lis
 
 
 if __name__ == '__main__':
-    from parse_dataset import parse_mjsynth
+    from parse_dataset import parse_mjsynth, parse_svt
 
-    train_image_path_list, train_label_list = parse_mjsynth(MJSYNTH_DIR, 
-        MJSYNTH_TRAIN_ANNOTATION_FILE)
-    create_lmdb(MJSYNTH_LMDB_DIR, train_image_path_list, train_label_list, 'train')
+    # train_image_path_list, train_label_list = parse_mjsynth(MJSYNTH_DIR, 
+    #     MJSYNTH_TRAIN_ANNOTATION_FILE)
+    # create_lmdb(MJSYNTH_LMDB_DIR, train_image_path_list, train_label_list, 'train')
 
-    val_image_path_list, val_label_list = parse_mjsynth(MJSYNTH_DIR,
-        MJSYNTH_VAL_ANNOTATION_FILE)
-    create_lmdb(MJSYNTH_LMDB_DIR, val_image_path_list, val_label_list, 'val')
+    # val_image_path_list, val_label_list = parse_mjsynth(MJSYNTH_DIR,
+    #     MJSYNTH_VAL_ANNOTATION_FILE)
+    # create_lmdb(MJSYNTH_LMDB_DIR, val_image_path_list, val_label_list, 'val')
+
+    test_image_path_list, test_label_list = parse_svt(SVT_DIR, SVT_TEST_XML_FILE)
+    create_lmdb(SVT_LMBD_DIR, test_image_path_list, test_label_list, 'test')

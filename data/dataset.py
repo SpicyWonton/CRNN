@@ -14,13 +14,15 @@ from torchvision import transforms
 class LMDBDataset(Dataset):
     def __init__(self, lmdb_dir, flag='train', transform=None, target_transform=None):
         super().__init__()
-        assert flag == 'train' or flag == 'val', \
-            'flag must be "train" or "val"'
+        assert flag in ['train', 'val', 'test'], \
+            'flag must be "train" or "val" or "test"'
 
         if flag == 'train':
             lmdb_dir = osp.join(lmdb_dir, 'train/')
         elif flag == 'val':
             lmdb_dir = osp.join(lmdb_dir, 'val/')
+        elif flag == 'test':
+            lmdb_dir = osp.join(lmdb_dir, 'test/')
         
         self.env = lmdb.open(lmdb_dir, readonly=True, readahead=False, max_readers=1, lock=False)
         if not self.env:

@@ -4,6 +4,10 @@ MJSYNTH_TRAIN_ANNOTATION_FILE = ['annotation_train.txt', 'annotation_test.txt']
 MJSYNTH_VAL_ANNOTATION_FILE = 'annotation_val.txt'
 MJSYNTH_LMDB_DIR = '/mnt/hdd3/std2021/huyi/datasets/lmdb/mjsynth/'
 
+SVT_DIR = '/mnt/hdd3/std2021/huyi/datasets/svt1/'
+SVT_TEST_XML_FILE = 'test.xml'
+SVT_LMBD_DIR = '/mnt/hdd3/std2021/huyi/datasets/lmdb/svt/'
+
 # train
 BATCH_SIZE = 256
 NUM_WORKERS = 2
@@ -19,3 +23,4 @@ DISPLAY_INTERVAL = 500
 BEST_ACCURACY = 0
 SEED = 996
 LOG_FILE = '/home/std2021/huyi/codes/python/MyProjects/CRNN/logs/log.txt'
+LOG_DIR = '/home/std2021/huyi/codes/python/MyProjects/CRNN/logs/'
