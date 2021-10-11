@@ -115,7 +115,7 @@ def save_checkpoint(model, optimizer, best_accuracy, epoch):
         'best_accuracy': best_accuracy,
         'epoch': epoch
     }
-    file_name = f'crnn_{epoch}_{best_accuracy:.5}'
+    file_name = f'crnn_{epoch}_{best_accuracy:.5}.pth'
     if not osp.exists(config.CHECKPOINT_DIR):
         os.makedirs(config.CHECKPOINT_DIR)
     torch.save(state, osp.join(config.CHECKPOINT_DIR, file_name))
