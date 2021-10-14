@@ -99,13 +99,13 @@ def create_lmdb(lmdb_dir, image_path_list, label_list, flag='train', lexicon_lis
 if __name__ == '__main__':
     from parse_dataset import parse_mjsynth, parse_svt
 
-    # train_image_path_list, train_label_list = parse_mjsynth(MJSYNTH_DIR, 
-    #     MJSYNTH_TRAIN_ANNOTATION_FILE)
-    # create_lmdb(MJSYNTH_LMDB_DIR, train_image_path_list, train_label_list, 'train')
+    train_image_path_list, train_label_list = parse_mjsynth(MJSYNTH_DIR, 
+        MJSYNTH_TRAIN_ANNOTATION_FILE)
+    create_lmdb(MJSYNTH_LMDB_DIR, train_image_path_list, train_label_list, 'train')
 
-    # val_image_path_list, val_label_list = parse_mjsynth(MJSYNTH_DIR,
-    #     MJSYNTH_VAL_ANNOTATION_FILE)
-    # create_lmdb(MJSYNTH_LMDB_DIR, val_image_path_list, val_label_list, 'val')
+    val_image_path_list, val_label_list = parse_mjsynth(MJSYNTH_DIR,
+        MJSYNTH_VAL_ANNOTATION_FILE)
+    create_lmdb(MJSYNTH_LMDB_DIR, val_image_path_list, val_label_list, 'val')
 
     test_image_path_list, test_label_list = parse_svt(SVT_DIR, SVT_TEST_XML_FILE)
     create_lmdb(SVT_LMBD_DIR, test_image_path_list, test_label_list, 'test')

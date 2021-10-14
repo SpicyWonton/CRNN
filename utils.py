@@ -120,29 +120,3 @@ def save_checkpoint(model, optimizer, best_accuracy, epoch):
         os.makedirs(config.CHECKPOINT_DIR)
     torch.save(state, osp.join(config.CHECKPOINT_DIR, file_name))
     print(f'Checkpoint {file_name} was saved successfully.')
-
-
-def delete_log_file(file):
-    if osp.exists(file):
-        os.remove(file)
-
-
-def save_log_file(file, log):
-    with open(file, 'a') as f:
-        f.write(log + '\n')
-        f.close()
-
-if __name__ == '__main__':
-    char_dict = CharDict(config.ALPHABET)
-    # text, length = char_dict.encode(('abcd', '4321'))
-    # print(text)
-    print(char_dict.alphabet)
-    encoded_text = torch.IntTensor([36, 10, 10, 36, 11, 36, 11, 12, 12, 36, 13, 36,
-                                    36, 4, 3, 36, 36, 36, 2, 2, 36, 1, 36, 1, 36])
-    length = torch.IntTensor([12, 13])
-    raw_decoded_texts = char_dict.decode(encoded_text, length, True)
-    for text in raw_decoded_texts:
-        print(text)
-    decoded_texts = char_dict.decode(encoded_text, length)
-    for text in decoded_texts:
-        print(text)

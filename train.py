@@ -52,18 +52,18 @@ def main():
     # criterion
     criterion = nn.CTCLoss(blank=class_count-1).to(device)
 
-    utils.delete_log_file(config.LOG_FILE)
+    logger = utils.Logger(config.LOG_DIR, 'mjsynth')
 
     for epoch in range(config.START_EPOCH, config.EPOCH_COUNT):
-        train(model, train_dataloader, criterion, optimizer, char_dict, epoch, device)
-        accuracy = validate(model, val_dataloader, criterion, char_dict, epoch, device)
+        train(model, train_dataloader, criterion, optimizer, char_dict, epoch, device, logger)
+        accuracy = validate(model, val_dataloader, criterion, char_dict, epoch, device, logger)
 
         if accuracy > config.BEST_ACCURACY:
             config.BEST_ACCURACY = accuracy
             save_checkpoint(model, optimizer, accuracy, epoch)
 
 
-def train(model, loader, criterion, optimizer, char_dict, epoch, device):
+def train(model, loader, criterion, optimizer, char_dict, epoch, device, logger):
     avg_loss = 0.0
     start_time = time.time()
     loader_time = 0
@@ -96,19 +96,17 @@ def train(model, loader, criterion, optimizer, char_dict, epoch, device):
         optimizer.step()
 
         if i == 0 or (i + 1) % config.DISPLAY_INTERVAL == 0:
-            log = f'Train: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], train loss: {avg_loss/(i+1):.5}'
-            print(log)
-            utils.save_log_file(config.LOG_FILE, log)
+            msg = f'Train: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], train loss: {avg_loss/(i+1):.5}'
+            logger.log(msg)
     
     avg_loss /= (i + 1)
     end_time = time.time()
-    log = f'Train: [{epoch+1}/{config.EPOCH_COUNT}], train loss: {avg_loss}, batch time: {end_time-start_time}, ' \
+    msg = f'Train: [{epoch+1}/{config.EPOCH_COUNT}], train loss: {avg_loss}, batch time: {end_time-start_time}, ' \
         f'dataloader time: {loader_time}'
-    print(log)
-    utils.save_log_file(config.LOG_FILE, log)
+    logger.log(msg)
 
 
-def validate(model, loader, criterion, char_dict, epoch, device):
+def validate(model, loader, criterion, char_dict, epoch, device, logger):
     avg_loss = 0.0
     start_time = time.time()
     loader_time = 0
@@ -145,23 +143,21 @@ def validate(model, loader, criterion, char_dict, epoch, device):
                     correct_count += 1
             
             if i == 0 or (i + 1) % config.DISPLAY_INTERVAL == 0:
-                log = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], val loss: {avg_loss/(i+1):.5}'
-                print(log)
-                utils.save_log_file(config.LOG_FILE, log)
+                msg = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}][{i+1}/{len(loader)}], val loss: {avg_loss/(i+1):.5}'
+                logger.log(msg)
                 # in order to display
                 raw_decoded_words = char_dict.decode(pred_chars, input_lengths, raw=True)[:5] # list of str
                 for raw_pred_word, pred_word, label_word in zip(raw_decoded_words, decoded_words, labels):
-                    log = f'Raw pred word: {raw_pred_word} ==> pred word: {pred_word}, label word: {label_word}'
-                    print(log)
-                    utils.save_log_file(config.LOG_FILE, log)
-        
+                    msg = f'Raw pred word: {raw_pred_word} ==> pred word: {pred_word}, label word: {label_word}'
+                    logger.log(msg)
+
         avg_loss /= (i + 1)
         accuracy = correct_count / (config.BATCH_SIZE * (i + 1))
         end_time = time.time()
-        log = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}], accuracy: {accuracy:.5}, val loss: {avg_loss}, ' \
+        msg = f'Validation: [{epoch+1}/{config.EPOCH_COUNT}], accuracy: {accuracy:.5}, val loss: {avg_loss}, ' \
             f'batch_time: {end_time - start_time}, dataloader time: {loader_time}'
-        print(log)
-        utils.save_log_file(config.LOG_FILE, log)
+        logger.log(msg)
+        
         return accuracy
 
 

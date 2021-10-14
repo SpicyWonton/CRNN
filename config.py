@@ -22,5 +22,4 @@ EPOCH_COUNT = 25
 DISPLAY_INTERVAL = 500
 BEST_ACCURACY = 0
 SEED = 996
-LOG_FILE = '/home/std2021/huyi/codes/python/MyProjects/CRNN/logs/log.txt'
 LOG_DIR = '/home/std2021/huyi/codes/python/MyProjects/CRNN/logs/'
