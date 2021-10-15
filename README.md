@@ -13,7 +13,7 @@ Raw predicted word: d----ii-s---p---l--a---y--, predicted word: display
 
 ### Result
 
-I use [MJSynth](https://thor.robots.ox.ac.uk/~vgg/data/text/mjsynth.tar.gz) to train and validation, use [SVT](http://vision.ucsd.edu/~kai/svt/svt.zip) to test. Use the checkpoint at epoch 19,  the accuracy reaches 80.371, compared to 80.8 in original paper.
+I use [MJSynth](https://thor.robots.ox.ac.uk/~vgg/data/text/mjsynth.tar.gz) to train and validate, use [SVT](http://vision.ucsd.edu/~kai/svt/svt.zip) to test. Use the checkpoint at epoch 19,  the accuracy reaches 80.371, compared to 80.8 in original paper.
 
 ### Train
 
